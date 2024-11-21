@@ -1,33 +1,64 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { MdDelete } from "react-icons/md";
+import { FaPlus } from "react-icons/fa";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [user, setUser] = useState('Elmer A')
+  const [newTodo, setNewTodo] = useState('')
+  const [todos, setTodos] = useState([
+    {
+      id: 1,
+      title: 'Todo 1',
+      completed: false
+    },
+    {
+      id: 2,
+      title: 'Todo 2',
+      completed: true
+    },
+    {
+      id: 3,
+      title: 'Todo 3',
+      completed: false
+    }
+  ])
+
+  const handleToggleTodo = (id) => {
+    setTodos(todos.map(todo => (
+      todo.id === id ? {...todo, completed: !todo.completed } : todo
+    )))
+  }
+
+  const handleDeleteTodo = (id) => {
+    setTodos(todos.filter(todo => todo.id !== id))
+  }
+
+  const handleNewTodo = () => {
+    setTodos([...todos, {id: todos.length + 1, title: newTodo, completed: false}])
+    setNewTodo('')
+  }
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <h1>Todo React App</h1>
+      {user ? (
+        <div>
+          <h3>Welcome, {user}</h3>
+          <input type="text" value={newTodo} placeholder='Add todo' onChange={(e) => setNewTodo(e.target.value)} />
+          <button onClick={handleNewTodo}><FaPlus /> Add</button>
+          <ul>
+            {todos.map(todo => (
+              <li key={todo.id}>
+                <input type="checkbox" checked={todo.completed} onChange={() => handleToggleTodo(todo.id)} />
+                {todo.completed ? <s>{todo.title}</s> : todo.title}
+                <button onClick={() => handleDeleteTodo(todo.id)}><MdDelete /> delete</button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        <p>You must login to view the todo lists</p>
+      )}
     </>
   )
 }
